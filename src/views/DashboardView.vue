@@ -8,6 +8,9 @@
       </div>
     </div>
 
+    <p v-if="loading" class="notice">Loading students...</p>
+    <p v-if="error" class="notice error-notice" role="alert">{{ error }}</p>
+
     <div class="dashboard-grid">
       <DashboardCard label="Total Students" :value="totalStudents" />
       <DashboardCard label="Present Today" :value="presentStudents" />
@@ -18,7 +21,7 @@
     <div class="activity-box">
       <h3>Activity</h3>
       <p>
-        Build the remaining features as part of the student activity.
+        Student totals are loaded from Realtime Database when you open the dashboard.
       </p>
       <RouterLink class="button" to="/students">
         View Students
@@ -29,7 +32,9 @@
 
 <script>
 import DashboardCard from '../components/DashboardCard.vue'
-import { students } from '../data/students.js'
+import { getData } from '../firebase/firebase-helper.js'
+
+const STUDENTS_PATH = 'students'
 
 export default {
   name: 'DashboardView',
@@ -40,7 +45,26 @@ export default {
 
   data() {
     return {
-      students
+      students: [],
+      loading: true,
+      error: ''
+    }
+  },
+
+  mounted() {
+    this.loadStudents()
+  },
+
+  methods: {
+    async loadStudents() {
+      try {
+        this.students = await getData(STUDENTS_PATH)
+        this.error = ''
+      } catch (error) {
+        this.error = error.message || 'Unable to load students.'
+      } finally {
+        this.loading = false
+      }
     }
   },
 

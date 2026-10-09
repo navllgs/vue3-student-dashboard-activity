@@ -7,9 +7,11 @@
       </div>
     </div>
 
-    <StudentInfo v-if="student" :student="student" />
+    <p v-if="loading" class="notice">Loading student...</p>
+    <p v-if="error" class="notice error-notice" role="alert">{{ error }}</p>
+    <StudentInfo v-else-if="student" :student="student" />
 
-    <div v-else class="empty-state">
+    <div v-else-if="!loading && !error" class="empty-state">
       <h3>Student not found</h3>
       <p>The requested student does not exist.</p>
     </div>
@@ -22,7 +24,9 @@
 
 <script>
 import StudentInfo from '../components/StudentInfo.vue'
-import { students } from '../data/students.js'
+import { getData } from '../firebase/firebase-helper.js'
+
+const STUDENTS_PATH = 'students'
 
 export default {
   name: 'StudentDetailView',
@@ -33,15 +37,32 @@ export default {
 
   data() {
     return {
-      students
+      students: [],
+      loading: true,
+      error: ''
+    }
+  },
+
+  mounted() {
+    this.loadStudents()
+  },
+
+  methods: {
+    async loadStudents() {
+      try {
+        this.students = await getData(STUDENTS_PATH)
+        this.error = ''
+      } catch (error) {
+        this.error = error.message || 'Unable to load students.'
+      } finally {
+        this.loading = false
+      }
     }
   },
 
   computed: {
     student() {
-      const id = Number(this.$route.params.id)
-
-      return this.students.find(student => student.id === id)
+      return this.students.find(student => student.id === this.$route.params.id)
     }
   }
 }

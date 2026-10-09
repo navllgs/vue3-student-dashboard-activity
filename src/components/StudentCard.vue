@@ -7,7 +7,7 @@
     </div>
 
     <div class="student-actions">
-      <button class="favorite-button" @click="toggleFavorite">
+      <button class="favorite-button" @click="$emit('toggle-favorite', student)">
         {{ student.favorite ? '★ Favorite' : '☆ Favorite' }}
       </button>
 
@@ -32,10 +32,6 @@ export default {
     }
   },
 
-  methods: {
-    toggleFavorite() {
-      this.student.favorite = !this.student.favorite
-    }
-  }
+  emits: ['toggle-favorite']
 }
 </script>
