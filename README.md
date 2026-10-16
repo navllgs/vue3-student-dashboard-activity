@@ -36,6 +36,7 @@ src/
 │   └── StudentInfo.vue
 ├── firebase/
 │   ├── firebase-helper.js
+│   ├── firestore-helper.js
 │   └── firebase.js
 ├── routes/
 │   └── index.js
@@ -51,6 +52,20 @@ src/
 ```
 
 `firebase/firebase.js` initializes Firebase from the `.env` values. `firebase/firebase-helper.js` provides generic `getData(path)`, `createData(path, data)`, `updateData(path, id, changes)`, and `deleteData(path, id)` functions for Realtime Database collections.
+
+### Optional Firestore Helper
+
+[firestore-helper.js](src/firebase/firestore-helper.js) provides the same four CRUD functions for Cloud Firestore, using the same Firebase project. The app still uses Realtime Database by default.
+
+To use the Firestore helper, enable **Cloud Firestore** in the Firebase console and configure its security rules to restrict access to authorized users. Import the functions from the new helper in the views that should use Firestore:
+
+```js
+import { getData, createData, updateData, deleteData } from '../firebase/firestore-helper.js'
+```
+
+Here, `path` is a collection path such as `'students'`, and `id` is a document ID. `getData` resolves to an array of records with an `id` field, `createData` resolves to the generated document ID, and update/delete resolve without a value. Errors propagate to the caller.
+
+`updateData` changes only the supplied fields, but requires an existing document (unlike Realtime Database, which can create a missing record). Use dot notation such as `{ 'address.city': 'Manila' }` for nested field updates. Realtime Database and Firestore store data separately; switching helpers does not migrate existing records.
 
 ## Learning Objectives
 

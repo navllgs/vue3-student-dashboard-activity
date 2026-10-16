@@ -8,6 +8,7 @@
           <RouterLink to="/">Dashboard</RouterLink>
           <RouterLink to="/students">Students</RouterLink>
           <RouterLink to="/students/manage">Manage</RouterLink>
+          <RouterLink to="/students/manage2">Manage (Firestore)</RouterLink>
           <RouterLink to="/about">About</RouterLink>
         </nav>
       </div>
